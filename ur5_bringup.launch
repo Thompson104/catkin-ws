@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+  Universal robot ur5 launch.  Loads ur5 robot description (see ur_common.launch
+  for more info)
+
+  Usage:
+    ur5_bringup.launch robot_ip:=<value>
+-->
+<launch>
+  
+  <!-- robot_ip: IP-address of the robot's socket-messaging server -->
+  <arg name="robot_ip"/>
+  <arg name="limited" default="false"/>
+  <arg name="min_payload"  default="0.0"/>
+  <arg name="max_payload"  default="5.0"/>
+  <arg name="prefix" default="" />
+  <!-- robot model -->
+  <include file="$(find ur_description)/launch/ur5_upload.launch">
+    <arg name="limited" value="$(arg limited)"/>
+  </include>
+  
+  <!-- ur common -->
+  <include file="$(find ur_modern_driver)/launch/ur_common.launch">
+    <arg name="prefix"  value="$(arg prefix)" />
+    <arg name="robot_ip" value="$(arg robot_ip)"/>
+    <arg name="min_payload"  value="$(arg min_payload)"/>
+    <arg name="max_payload"  value="$(arg max_payload)"/>
+  </include>
+
+
+ <!-- joy node -->
+  <node respawn="true" pkg="joy"
+        type="joy_node" name="left_joy" >
+  <remap from= "joy" to="left_joy" />
+    <param name="dev" type="string" value="/dev/input/js0" />
+    <param name="deadzone" value="0.050000" />
+  </node>
+
+   <!-- joy node -->
+  <node respawn="true" pkg="joy"
+        type="joy_node" name="right_joy" >
+  <remap from= "joy" to="right_joy" />
+    <param name="dev" type="string" value="/dev/input/js1" />
+    <param name="deadzone" value="0.050000" />
+  </node>
+
+</launch>
